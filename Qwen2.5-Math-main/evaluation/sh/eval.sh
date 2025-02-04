@@ -1,14 +1,15 @@
 set -ex
 
-PROMPT_TYPE=$1
-MODEL_NAME_OR_PATH=$2
+export CUDA_VISIBLE_DEVICES="0"
+PROMPT_TYPE="qwen25-math-cot"
+MODEL_NAME_OR_PATH="Qwen/Qwen2.5-Math-1.5B-Instruct"
 OUTPUT_DIR=${MODEL_NAME_OR_PATH}/math_eval
 
 SPLIT="test"
 NUM_TEST_SAMPLE=-1
 
 # English open datasets
-DATA_NAME="gsm8k,math,svamp,asdiv,mawps,carp_en,tabmwp,minerva_math,gaokao2023en,olympiadbench,college_math"
+DATA_NAME="gsm8k,math500,minerva_math,gaokao2023en,olympiadbench,college_math,aime24,amc23"
 TOKENIZERS_PARALLELISM=false \
 python3 -u math_eval.py \
     --model_name_or_path ${MODEL_NAME_OR_PATH} \
@@ -25,6 +26,7 @@ python3 -u math_eval.py \
     --end -1 \
     --save_outputs \
     --overwrite \
+    --use_safetensors \
     # --use_vllm \
 
 # # English multiple-choice datasets
