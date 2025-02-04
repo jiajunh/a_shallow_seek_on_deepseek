@@ -5,6 +5,7 @@ datasets
 torch
 transformers
 python_dateutil
+accelerate
 # flash_attn
 
 # math_eval
