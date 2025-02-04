@@ -401,5 +401,6 @@ def main(llm, tokenizer, data_name, args):
 
 if __name__ == "__main__":
     args = parse_args()
+    print(args)
     set_seed(args.seed)
     setup(args)
