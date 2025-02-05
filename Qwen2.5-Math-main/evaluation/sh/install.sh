@@ -2,7 +2,7 @@
 
 cd ../latex2sympy
 pip install -U pip setuptools
-pip install torch
+pip install torch torchvision torchaudio
 pip install -e .
 cd ..
 pip install -r requirements.txt 
