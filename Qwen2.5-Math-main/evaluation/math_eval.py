@@ -284,7 +284,7 @@ def main(llm, tokenizer, data_name, args):
                 tokenizer=tokenizer,
                 prompts=prompts,
                 max_new_tokens=args.max_tokens_per_call,
-                batch_size=16,
+                batch_size=8,
                 stop_id_sequences=stop_words,
             )
 
