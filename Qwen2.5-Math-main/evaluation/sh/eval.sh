@@ -10,7 +10,7 @@ NUM_TEST_SAMPLE=-1
 # English open datasets
 DATA_NAME="math500,gsm8k,minerva_math,olympiadbench,aime24,amc23"
 TOKENIZERS_PARALLELISM=false \
-python3 -u math_eval.py \
+python -u math_eval.py \
     --model_name_or_path ${MODEL_NAME_OR_PATH} \
     --data_name ${DATA_NAME} \
     --output_dir ${OUTPUT_DIR} \
