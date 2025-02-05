@@ -26,4 +26,4 @@ python3 -u math_eval.py \
     --save_outputs \
     --overwrite \
     --use_safetensors \
-    --use_vllm \
+    # --use_vllm \
