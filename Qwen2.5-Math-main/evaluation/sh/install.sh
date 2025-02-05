@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd ../latex2sympy
+pip install -U pip setuptools
+pip install torch
 pip install -e .
 cd ..
 pip install -r requirements.txt 
