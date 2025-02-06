@@ -1,11 +1,11 @@
 # common
-vllm
 tqdm
 datasets
 torch
 transformers
 python_dateutil
 accelerate
+vllm==0.5.4
 flash_attn
 
 # math_eval
