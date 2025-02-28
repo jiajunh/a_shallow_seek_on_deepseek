@@ -1,12 +1,14 @@
 import os
 import argparse
-
 import torch
+
+from tqdm import tqdm
 
 from data_loader import load_data
 from utils import set_seed
 from model_utils import load_hf_lm_and_tokenizer
 from preprocess import *
+from parser import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -23,6 +25,7 @@ def parse_args():
     parser.add_argument("--temperature", default=0, type=int)
 
     parser.add_argument("--shuffle", action="store_true")
+    parser.add_argument("--overwrite", action="store_true")
 
     parser.add_argument("--model_name", )
     args = parser.parse_args()
@@ -45,12 +48,50 @@ def setup(args):
         results.append(main(model, tokenizer, data_name, args))
 
 def main(model, tokenizer, data_name, args):
-    prepare_data(data_name, args)
-    pass
+    data, processed_samples, out_file = prepare_data(data_name, args)
+    # data has basic keys: ['idx', 'problem', 'solution', 'answer', 'subject', 'level', 'unique_id']
+    print("data:", data_name, " ,remain samples:", len(data))
+    if len(data):
+        print("#"*100)
+        print(data[0])
+        print("#"*100)
+    
+    samples = []
+    for example in tqdm(data[0:1], total=len(data)):
+        # print(example.keys())
+
+        idx = example["idx"]
+        example["question"] = parse_question(example, data_name)
+        if example["question"] == "":
+            continue
+        sample = {
+            "idx": idx,
+            "question": example["question"],
+        }
+
+        # add remain fields
+        for key in [
+            "level",
+            "type",
+            "unit",
+            "solution_type",
+            "choices",
+            "solution",
+            "ques_type",
+            "ans_type",
+            "answer_type",
+            "dataset",
+            "subfield",
+            "filed",
+            "theorem",
+            "answer",
+        ]:
+            if key in example:
+                sample[key] = example[key]
+        samples.append(sample)
 
 if __name__ == "__main__":
     args = parse_args()
-    print(type(args))
     set_seed(args.seed)
     setup(args)
     # print(args)
