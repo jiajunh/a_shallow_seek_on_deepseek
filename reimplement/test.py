@@ -24,6 +24,10 @@ def parse_args():
     parser.add_argument("--num_test_sample", default=1, type=int)
     parser.add_argument("--temperature", default=0, type=int)
 
+    parser.add_argument("--prompt_type", default="cot", type=str)
+    parser.add_argument("--num_shots", default=0, type=int)
+    parser.add_argument("--n_sampling", default=1, type=int)
+
     parser.add_argument("--shuffle", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
 
@@ -58,15 +62,25 @@ def main(model, tokenizer, data_name, args):
     
     samples = []
     for example in tqdm(data[0:1], total=len(data)):
-        # print(example.keys())
+        print(example.keys())
 
         idx = example["idx"]
+        # print(example["problem"])
         example["question"] = parse_question(example, data_name)
+        # print(example["question"])
         if example["question"] == "":
             continue
+        gt_cot, gt_ans = parse_ground_truth(example, data_name)
+        example["gt_ans"] = gt_ans
+
+        full_prompt = construct_prompt(example, data_name, args)
+        
         sample = {
             "idx": idx,
             "question": example["question"],
+            "gt_cot": gt_cot,
+            "gt": gt_ans,
+            "prompt": full_prompt,
         }
 
         # add remain fields
@@ -90,10 +104,14 @@ def main(model, tokenizer, data_name, args):
                 sample[key] = example[key]
         samples.append(sample)
 
+    
+        # for key in sample.keys():
+        #     print(key)
+        #     print(sample[key])
+        
+
 if __name__ == "__main__":
     args = parse_args()
     set_seed(args.seed)
     setup(args)
-    # print(args)
-    # data = load_data(args.data_names, args.split, args.data_dir)
     
