@@ -13,7 +13,7 @@ from parser import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_names", default="math500,aime24,amc23,minerva_math,olympiadbench", type=str)
+    parser.add_argument("--data_names", default="math500, aime24, amc23, minerva_math, olympiadbench", type=str)
     parser.add_argument("--data_dir", default="./data", type=str)
     parser.add_argument("--output_dir", default="./outputs", type=str)
     parser.add_argument("--split", default="test", type=str)
@@ -48,7 +48,7 @@ def setup(args):
     model.to(device)
     # print(model, tokenizer)
 
-    data_list = args.data_names.split(",")
+    data_list = [x.strip() for x in args.data_names.split(",")]
     results = []
     for data_name in data_list:
         results.append(main(model, tokenizer, data_name, args))
@@ -123,6 +123,7 @@ def main(model, tokenizer, data_name, args):
 
     # Evaluation
     start_time = time.time()
+
     end_time = time.time()
 
 
