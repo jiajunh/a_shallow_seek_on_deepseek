@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from data_loader import load_data
 from utils import set_seed
-from model_utils import load_hf_lm_and_tokenizer
+from model_utils import load_hf_lm_and_tokenizer, generate_completions
 from preprocess import *
 from parser import *
 
@@ -20,20 +20,20 @@ def parse_args():
     parser.add_argument("--seed", default=0, type=int)
 
     parser.add_argument("--model_name_or_path", default="Qwen/Qwen2.5-Math-1.5B", type=str)
-    parser.add_argument("--tokenizer_name_or_path", default=None, type=str)
-    parser.add_argument("--use_safetensors", default=True, type=bool)
-    parser.add_argument("--num_test_sample", default=1, type=int)
+    parser.add_argument("--tokenizer_name_or_path", default="", type=str)
+    parser.add_argument("--use_safetensors", action="store_true")
+    # parser.add_argument("--num_test_sample", default=1, type=int)
     parser.add_argument("--temperature", default=0, type=int)
     parser.add_argument("--batch_size", default=16, type=int)
 
     parser.add_argument("--prompt_type", default="cot", type=str)
-    parser.add_argument("--num_shots", default=0, type=int)
+    # parser.add_argument("--num_shots", default=0, type=int)
     parser.add_argument("--n_sampling", default=1, type=int)
+    parser.add_argument("--max_tokens", default=2048, type=int)
 
     parser.add_argument("--shuffle", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
 
-    parser.add_argument("--model_name", )
     args = parser.parse_args()
     return args
 
@@ -46,7 +46,6 @@ def setup(args):
         use_safetensors = args.use_safetensors,
     )
     model.to(device)
-    # print(model, tokenizer)
 
     data_list = [x.strip() for x in args.data_names.split(",")]
     results = []
@@ -79,7 +78,7 @@ def main(model, tokenizer, data_name, args):
     elif "pure" in args.prompt_type:
         stop_words.append("\n\n\n")
     
-    for example in tqdm(data, total=len(data)):
+    for example in tqdm(data[0:1], total=len(data)):
 
         idx = example["idx"]
         # print(example["problem"])
@@ -123,7 +122,22 @@ def main(model, tokenizer, data_name, args):
 
     # Evaluation
     start_time = time.time()
+    print("Evaluation start!")
+    print("-" * 20, "Epoch", 0)
 
+    for i in range(0, len(samples), args.batch_size):
+        prompts = [s["prompt"] for s in samples[i:i+args.batch_size]]
+        answers = [s["gt"] for s in samples[i:i+args.batch_size]]
+        outputs = generate_completions(
+            model=model,
+            tokenizer=tokenizer,
+            batch_prompts=prompts,
+            max_new_tokens=args.max_tokens,
+            stop_id_sequences=stop_words,
+        )
+
+
+    print("Evaluation end!")
     end_time = time.time()
 
 
