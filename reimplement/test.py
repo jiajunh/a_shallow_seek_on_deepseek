@@ -1,6 +1,7 @@
 import os
 import argparse
 import torch
+import time
 
 from tqdm import tqdm
 
@@ -59,10 +60,24 @@ def main(model, tokenizer, data_name, args):
         print("#"*100)
         print(data[0])
         print("#"*100)
-    
+
     samples = []
-    for example in tqdm(data[0:1], total=len(data)):
-        print(example.keys())
+
+    stop_words = ["</s>", "<|im_end|>", "<|endoftext|>"]
+    if args.prompt_type in ["cot"]:
+        stop_words.append("\n\nQuestion:")
+    if args.prompt_type in ["pal", "tool-integrated", "jiuzhang_tora"]:
+        stop_words.extend(["\n\n---", "```output"])
+    elif args.prompt_type in ["wizard_zs", "platypus_fs"]:
+        stop_words.extend(["Instruction", "Response"])
+    elif "jiuzhang" in args.prompt_type:
+        stop_words.append("\n\n## Question")
+    elif "numina" in args.prompt_type:
+        stop_words.append("\n### Problem")
+    elif "pure" in args.prompt_type:
+        stop_words.append("\n\n\n")
+    
+    for example in tqdm(data, total=len(data)):
 
         idx = example["idx"]
         # print(example["problem"])
@@ -104,11 +119,8 @@ def main(model, tokenizer, data_name, args):
                 sample[key] = example[key]
         samples.append(sample)
 
-    
-        # for key in sample.keys():
-        #     print(key)
-        #     print(sample[key])
-        
+    # Evaluation
+
 
 if __name__ == "__main__":
     args = parse_args()
