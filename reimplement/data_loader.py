@@ -10,6 +10,7 @@ from typing import Union, Iterable, Any
 
 def load_data(data_name: str, split: str, data_dir: str) -> list[Any]:
     data_file = f"{data_dir}/{data_name}/{split}.jsonl"
+    print(data_file)
     if os.path.exists(data_file):
         data = list(load_jsonl(data_file))
         print("Load data from {}, total {} data loaded.".format(data_file, len(data)))

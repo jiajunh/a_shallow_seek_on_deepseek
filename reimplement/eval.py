@@ -13,7 +13,7 @@ from parser import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_names", default="math500", type=str)
+    parser.add_argument("--data_names", default="math500,aime24,amc23,minerva_math,olympiadbench", type=str)
     parser.add_argument("--data_dir", default="./data", type=str)
     parser.add_argument("--output_dir", default="./outputs", type=str)
     parser.add_argument("--split", default="test", type=str)
@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument("--use_safetensors", default=True, type=bool)
     parser.add_argument("--num_test_sample", default=1, type=int)
     parser.add_argument("--temperature", default=0, type=int)
+    parser.add_argument("--batch_size", default=16, type=int)
 
     parser.add_argument("--prompt_type", default="cot", type=str)
     parser.add_argument("--num_shots", default=0, type=int)
@@ -53,6 +54,7 @@ def setup(args):
         results.append(main(model, tokenizer, data_name, args))
 
 def main(model, tokenizer, data_name, args):
+    print(data_name)
     data, processed_samples, out_file = prepare_data(data_name, args)
     # data has basic keys: ['idx', 'problem', 'solution', 'answer', 'subject', 'level', 'unique_id']
     print("data:", data_name, " ,remain samples:", len(data))
@@ -120,6 +122,9 @@ def main(model, tokenizer, data_name, args):
         samples.append(sample)
 
     # Evaluation
+    start_time = time.time()
+    end_time = time.time()
+
 
 
 if __name__ == "__main__":
