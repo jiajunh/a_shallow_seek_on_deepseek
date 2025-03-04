@@ -22,12 +22,12 @@ def parse_args():
     parser.add_argument("--model_name_or_path", default="Qwen/Qwen2.5-Math-1.5B", type=str)
     parser.add_argument("--tokenizer_name_or_path", default="", type=str)
     parser.add_argument("--use_safetensors", action="store_true")
-    # parser.add_argument("--num_test_sample", default=1, type=int)
+    parser.add_argument("--num_test_sample", default=1, type=int)
     parser.add_argument("--temperature", default=0, type=int)
     parser.add_argument("--batch_size", default=16, type=int)
 
     parser.add_argument("--prompt_type", default="cot", type=str)
-    # parser.add_argument("--num_shots", default=0, type=int)
+    parser.add_argument("--num_shots", default=0, type=int)
     parser.add_argument("--n_sampling", default=1, type=int)
     parser.add_argument("--max_tokens", default=2048, type=int)
 
@@ -135,7 +135,6 @@ def main(model, tokenizer, data_name, args):
             max_new_tokens=args.max_tokens,
             stop_id_sequences=stop_words,
         )
-
 
     print("Evaluation end!")
     end_time = time.time()
